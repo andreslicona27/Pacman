@@ -1,0 +1,11 @@
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\bin\Debug\Pacman.exe.config
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\bin\Debug\Pacman.exe
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\bin\Debug\Pacman.pdb
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\obj\Debug\Pacman.csproj.AssemblyReference.cache
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\obj\Debug\Pacman.csproj.SuggestedBindingRedirects.cache
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\obj\Debug\Pacman.Form1.resources
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\obj\Debug\Pacman.Properties.Resources.resources
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\obj\Debug\Pacman.csproj.GenerateResource.cache
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\obj\Debug\Pacman.csproj.CoreCompileInputs.cache
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\obj\Debug\Pacman.exe
+C:\Users\Andres Licona\Projects\Pacman\Pacman\Pacman\obj\Debug\Pacman.pdb
