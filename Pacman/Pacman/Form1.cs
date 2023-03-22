@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Pacman
@@ -14,23 +9,37 @@ namespace Pacman
     {
         // Game Properties 
         int score;
-        bool gameOver;
+        PictureBox coin = new PictureBox();
+        List<Enemy> ghosts = new List<Enemy>();
+        Random rand = new Random();
+        Image[] ghostImages =
+            {
+                Properties.Resources.red_guy,
+                Properties.Resources.yellow_guy,
+                Properties.Resources.pink_guy
+            };
 
         // Pacman Properties
         bool goUp;
         bool goDown;
         bool goRight;
         bool goLeft;
-        int pacmanSpeed;
+        int pacmanSpeed = 8;
 
-        int redGhostSpeed;
-        int yellowGhostSpeed;
-        int pinkGhost1;
-        int pinkGhost2;
 
         public Form1()
         {
             InitializeComponent();
+
+            // Coin creation
+            coin.Tag = "coin";
+            coin.Name = "Coin";
+            coin.Size = new Size(20, 20);
+            coin.Image = Properties.Resources.coin;
+            coin.SizeMode = PictureBoxSizeMode.StretchImage;
+            coin.Location = new Point(rand.Next(30, 671), rand.Next(50, 470));
+            Controls.Add(coin);
+
             ResetGame();
         }
 
@@ -98,9 +107,7 @@ namespace Pacman
             lblScore.Text = "Score: " + score;
 
             PacmanMovement();
-
             PacmanTouchManagement();
-
             GhostMovement();
         }
 
@@ -117,8 +124,9 @@ namespace Pacman
                     {
                         if (pbPacman.Bounds.IntersectsWith(control.Bounds))
                         {
-                            score += 1;
-                            control.Visible = false;
+                            score += 10;
+                            coin.Location = new Point(rand.Next(30, 671), rand.Next(50, 470));
+                            GhostCreation();
                         }
                     }
 
@@ -126,7 +134,7 @@ namespace Pacman
                     {
                         if (pbPacman.Bounds.IntersectsWith(control.Bounds))
                         {
-                            GameOver("You Lose!");
+                            GameOver("You Lose! You crash against the the wall");
                         }
                     }
 
@@ -134,7 +142,7 @@ namespace Pacman
                     {
                         if (pbPacman.Bounds.IntersectsWith(control.Bounds))
                         {
-                            GameOver("You Lose! You get touch by the enemy!");
+                            GameOver("You Lose! You get touch by the ghost!");
                         }
 
                     }
@@ -174,34 +182,45 @@ namespace Pacman
         /// </summary>
         private void GhostMovement()
         {
-            //redGhost.Left += redGhostSpeed;
+            int positionX;
+            int positionY;
+            foreach (Enemy ghost in ghosts)
+            {
+                positionX = ghost.Ghost.Location.X + (ghost.Speed * ghost.DirectionX);
+                positionY = ghost.Ghost.Location.Y + (ghost.Speed * ghost.DirectionY);
+                ghost.Ghost.Location = new Point(positionX, positionY);
 
-            //if (redGhost.Bounds.IntersectsWith(pictureBox1.Bounds) || redGhost.Bounds.IntersectsWith(pictureBox2.Bounds))
-            //{
-            //    redGhostSpeed = -redGhostSpeed;
-            //}
+                if (ghost.Ghost.Bounds.IntersectsWith(pbWall2.Bounds) ||
+                    ghost.Ghost.Bounds.IntersectsWith(pbWall4.Bounds))
+                {
+                    ghost.DirectionX *= -1;
+                }
+                if (ghost.Ghost.Bounds.IntersectsWith(pbWall1.Bounds) ||
+                    ghost.Ghost.Bounds.IntersectsWith(pbWall3.Bounds))
+                {
+                    ghost.DirectionY *= -1;
+                }
+            }
+        }
 
-            //yellowGhost.Left -= yellowGhostSpeed;
+        int i = 0;
+        /// <summary>
+        /// Basic code for the creation of each ghost and the addition of that ghost to the colection
+        /// </summary>
+        private void GhostCreation()
+        {
+            PictureBox newGhost = new PictureBox();
+            newGhost.Tag = "ghost";
+            newGhost.Name = "G" + i;
+            newGhost.Size = new Size(25, 40);
+            newGhost.SizeMode = PictureBoxSizeMode.StretchImage;
+            newGhost.Image = ghostImages[rand.Next(0, ghostImages.Length)];
+            newGhost.Location = new Point(rand.Next(30, 671), rand.Next(50, 470));
 
-            //if (yellowGhost.Bounds.IntersectsWith(pictureBox3.Bounds) || yellowGhost.Bounds.IntersectsWith(pictureBox4.Bounds))
-            //{
-            //    yellowGhostSpeed = -yellowGhostSpeed;
-            //}
-
-
-            //pinkGhost.Left -= pinkGhostX;
-            //pinkGhost.Top -= pinkGhostY;
-
-
-            //if (pinkGhost.Top < 0 || pinkGhost.Top > 520)
-            //{
-            //    pinkGhostY = -pinkGhostY;
-            //}
-
-            //if (pinkGhost.Left < 0 || pinkGhost.Left > 620)
-            //{
-            //    pinkGhostX = -pinkGhostX;
-            //}
+            this.Controls.Add(newGhost);
+            Enemy ghost = new Enemy(newGhost, newGhost.Name);
+            ghosts.Add(ghost);
+            i++;
         }
 
         /// <summary>
@@ -209,28 +228,20 @@ namespace Pacman
         /// </summary>
         private void ResetGame()
         {
-            gameOver = false;
             score = 0;
             lblScore.Text = "Score: " + score;
 
-            redGhostSpeed = 5;
-            yellowGhostSpeed = 5;
-            pinkGhost1 = 5;
-            pinkGhost2 = 5;
-            pacmanSpeed = 8;
-
+            pbPacman.Image = Properties.Resources.right;
             pbPacman.Left = this.Width / 2;
             pbPacman.Top = this.Height / 2;
 
-
-            // We add all the components to the game 
-            foreach (Control control in this.Controls)
+            foreach (Enemy ghost in ghosts)
             {
-                if (control is PictureBox)
-                {
-                    control.Visible = true;
-                }
+                this.Controls.Remove(ghost.Ghost);
             }
+            ghosts.Clear();
+
+            GhostCreation();
             gameTimer.Start();
         }
 
@@ -240,7 +251,6 @@ namespace Pacman
         /// <param name="message">the message you show to the player when he losses</param>
         private void GameOver(string message)
         {
-            gameOver = true;
             gameTimer.Stop();
             lblScore.Text = String.Format($"Score: {score} \t {message}");
         }
